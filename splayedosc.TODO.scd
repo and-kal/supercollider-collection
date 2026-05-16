@@ -1,10 +1,7 @@
 // Splayedosc — FM-chain oscillator bank (PinkNoise → PulseDPW → SinOsc → ...)
 // Requires sc3-plugins: PulseDPW
-// Fixed: dur had no default → 0 → silent envelope (renamed sustain);
-//        PinkNoise.ar(freq+osc5*rand, mul:env) was setting noise mul not freq (wrong arg);
-//        Compander result was discarded (out overwritten before use);
-//        \width Pbind key had no matching SynthDef arg;
-//        1.0.rand → Rand(0.0,1.0) for per-note FM depth variation
+
+// TODO: volume is very low, MIDI notes don't do much
 
 s.boot;
 
@@ -50,15 +47,15 @@ Pdef(\arppp, Pbind(
 
 (
 var w = Window("Splayedosc", Rect(200, 200, 440, 310)).front;
+var freqLoBox = NumberBox(w, Rect(160, 46, 60, 22)).value_(100).clipLo_(5).clipHi_(2000);
+var freqHiBox = NumberBox(w, Rect(160, 78, 60, 22)).value_(129).clipLo_(5).clipHi_(2000);
 
 StaticText(w, Rect(10, 10, 420, 20)).string_("Splayedosc — FM-Chain Bank").align_(\center);
 
 // Frequency range of the pool
 StaticText(w, Rect(10, 48, 140, 20)).string_("Freq pool low (Hz):");
-var freqLoBox = NumberBox(w, Rect(160, 46, 60, 22)).value_(100).clipLo_(5).clipHi_(2000);
 
 StaticText(w, Rect(10, 80, 140, 20)).string_("Freq pool high (Hz):");
-var freqHiBox = NumberBox(w, Rect(160, 78, 60, 22)).value_(129).clipLo_(5).clipHi_(2000);
 
 Button(w, Rect(240, 46, 150, 56))
     .states_([["Apply freq range", Color.black, Color.grey(0.8)]])

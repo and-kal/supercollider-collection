@@ -1,19 +1,19 @@
 // Voicey — resonant pulse oscillator melody
-// Original concept kept; fixed compile-time randoms and added GUI
 
 s.boot;
 
 (
-SynthDef(\voicey, { |freq = 440, rel = 0.3, amp = 0.5, pan = 0|
-    var duty     = Rand(0.0, 1.0);            // per-note random duty cycle
+SynthDef(\voicey, { |freq = 440, rel = 0.3, amp = 0.95, pan = 0|
+    var rez;
+	var duty     = Rand(0.0, 1.0);            // per-note random duty cycle
     var filtFreq = freq + Rand(200, 2000);    // per-note random filter freq
     var sig = PulseDPW.ar(
         freq * LFNoise2.kr(17, 0.1, 1),
         duty,
-        EnvGen.ar(Env.perc(releaseTime: rel, level: 0.5), doneAction: 2)
+        EnvGen.ar(Env.perc(releaseTime: rel, level: 1), doneAction: 2)
     );
-    sig = Resonz.ar(sig, filtFreq, 0.15);    // rq 0.15 — tight resonance
-    Out.ar(0, Pan2.ar(sig * amp, pan));
+    rez = Resonz.ar(sig, filtFreq, 0.15, mul: 4);    // rq 0.15 — tight resonance
+	Out.ar(0, Pan2.ar((rez + sig) * amp, pan));
 }).add;
 )
 

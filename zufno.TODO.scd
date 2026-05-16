@@ -2,6 +2,8 @@
 // Layer 1: Gendy1 dynamic stochastic synthesis (melodic)
 // Layer 2: Latch/S&H digital texture (percussive)
 
+// TODO: autofire button doesn't work
+
 s.boot;
 
 (
@@ -53,7 +55,8 @@ SynthDef(\zufno, { |amp = 0.5|
 
 // GUI
 (
-var w = Window("Zufno", Rect(200, 180, 450, 310)).front;
+var w = Window("Zufno", Rect(200, 180, 450, 360)).front;
+var zufnoAmpSl = Slider(w, Rect(10, 255, 310, 20)).value_(0.5);
 var zufnoTask;
 
 StaticText(w, Rect(10, 10, 430, 20))
@@ -99,10 +102,7 @@ Button(w, Rect(10, 210, 110, 32))
     .states_([["Fire once", Color.black, Color.cyan]])
     .action_({ Synth(\zufno) });
 
-var zufnoAmpSl = Slider(w, Rect(10, 255, 310, 20)).value_(0.5);
 StaticText(w, Rect(330, 253, 80, 20)).string_("Texture amp");
-
-Button(w, Rect(10, 254, 0, 0)); // placeholder — using slider above
 
 Button(w, Rect(130, 210, 150, 32))
     .states_([["Auto-fire on", Color.black, Color.green], ["Auto-fire off", Color.black, Color.red]])
@@ -119,7 +119,7 @@ Button(w, Rect(130, 210, 150, 32))
     });
 
 // Stop all
-Button(w, Rect(10, 266, 110, 32))
+Button(w, Rect(10, 300, 110, 32))
     .states_([["Stop all", Color.black, Color.red(0.8)]])
     .action_({
         Pdef(\gengen).stop;

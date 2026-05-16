@@ -1,5 +1,6 @@
-// Low-frequency rumble generator
 // VosimOsc (sc3-plugins) + Dust, BPF compression
+
+// TODO: spawning too many synths when freq and dur are low
 
 s.boot;
 
@@ -16,7 +17,7 @@ SynthDef(\rumb, { |freq = 60, sustain = 2, det = 300, i = 10|
     var out = Mix.fill(10, {
         [
             VosimOsc.ar(freq, freq * 1.01, freq * 0.99) * env,
-            Dust.ar(freq * detuner * [1000, 20, 30, 100].choose, mul: env)
+            Dust.ar(freq * detuner * [500, 20, 30, 100].choose, mul: env)
         ].choose
     });
     out = Compander.ar(BPF.ar(out, freq * 1.5, rq: 0.7), out);

@@ -1,6 +1,8 @@
 // Talkbot — granular FM voice synthesizer + detuned drone + drum sampler
 // Three-part instrument: play voice via MIDI, layer drone, trigger drums from files
 
+// TODO: make it sound more interesting
+
 s.boot;
 
 (
@@ -60,8 +62,14 @@ MIDIdef.noteOff(\talkOff, { |vel, note|
 // --- GUI ---
 (
 var w = Window("Talkbot", Rect(150, 120, 480, 400)).front;
+var bpmBox = NumberBox(w, Rect(75, 262, 50, 22)).value_(120).clipLo_(30).clipHi_(300);
 var droneNode, patPlayer, drumTask;
 var drumBufs = Array.new(3);
+var formantSlider = Slider(w, Rect(140, 66, 300, 20))
+    .value_(0.4)
+    .action_({ |v| ~talkFormant = v.value.linexp(0, 1, 200, 4000) });
+var droneFreqSl = Slider(w, Rect(140, 170, 250, 20)).value_(0.15);
+
 
 StaticText(w, Rect(10, 10, 460, 22))
     .string_("Talkbot — Granular FM Voice + Drone + Drums").align_(\center);
@@ -70,9 +78,7 @@ StaticText(w, Rect(10, 10, 460, 22))
 StaticText(w, Rect(10, 44, 460, 16)).string_("── VOICE (also responds to MIDI) ──").align_(\center);
 
 StaticText(w, Rect(10, 66, 120, 20)).string_("Formant (Hz):");
-var formantSlider = Slider(w, Rect(140, 66, 300, 20))
-    .value_(0.4)
-    .action_({ |v| ~talkFormant = v.value.linexp(0, 1, 200, 4000) });
+
 
 Button(w, Rect(10, 98, 120, 28))
     .states_([["Play pattern", Color.black, Color.cyan], ["Stop pattern", Color.black, Color.red]])
@@ -93,7 +99,6 @@ Button(w, Rect(10, 98, 120, 28))
 StaticText(w, Rect(10, 148, 460, 16)).string_("── DRONE ──").align_(\center);
 
 StaticText(w, Rect(10, 170, 120, 20)).string_("Drone freq (Hz):");
-var droneFreqSl = Slider(w, Rect(140, 170, 250, 20)).value_(0.15);
 
 Button(w, Rect(400, 168, 68, 24))
     .states_([["On", Color.black, Color.green], ["Off", Color.black, Color.red]])
@@ -124,7 +129,6 @@ StaticText(w, Rect(10, 210, 460, 16)).string_("── DRUMS (load up to 3 mono s
 };
 
 StaticText(w, Rect(10, 264, 60, 20)).string_("BPM:");
-var bpmBox = NumberBox(w, Rect(75, 262, 50, 22)).value_(120).clipLo_(30).clipHi_(300);
 
 Button(w, Rect(140, 261, 110, 26))
     .states_([["Start drums", Color.black, Color.green], ["Stop drums", Color.black, Color.red]])

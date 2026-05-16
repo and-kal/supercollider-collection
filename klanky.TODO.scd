@@ -1,10 +1,5 @@
 // Klanky — physical modelling via Klank resonator bank
 // built upon "hommage à l'impressionnisme" by prkoon
-// Fixed: freqs=32 vs decays=16 mismatch → both 16;
-//        computed amps array was discarded (0.05 used) → now used;
-//        exprand(10,5) lo>hi → exprand(0.5,10);
-//        double-fork structure simplified;
-//        dur arg renamed sustain so Pbind timing feeds correctly
 
 s.boot;
 
