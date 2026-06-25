@@ -31,19 +31,22 @@ s.waitForBoot {
 
 (
 ~makeSpectralGui = {
-    var w, layout, delaySliders, fbSliders;
+    var w, mainLayout, delayCol, fbCol, delaySliders, fbSliders;
 
-    w = Window("16-bin spectral delay", Rect(100, 100, 520, 560)).front;
-    layout = VLayout.new;
+    w = Window("16-bin spectral delay", Rect(100, 100, 820, 480)).front;
+    mainLayout   = HLayout.new;
+    delayCol     = VLayout.new;
+    fbCol        = VLayout.new;
     delaySliders = Array.newClear(16);
-    fbSliders = Array.newClear(16);
+    fbSliders    = Array.newClear(16);
 
-    layout.add(StaticText().string_("Delay times"));
+    // ── left column: delay times ──────────────────────────────────────────
+    delayCol.add(StaticText().string_("Delay times").align_(\center));
     16.do { |i|
-        var row = HLayout.new;
-        var label = StaticText().string_("Bin " ++ (i+1)).fixedWidth_(60);
+        var row    = HLayout.new;
+        var label  = StaticText().string_("Bin " ++ (i+1)).fixedWidth_(44);
         var slider = Slider().value_(~delayVals[i] / 0.8);
-        var box = NumberBox().value_(~delayVals[i]).clipLo_(0).clipHi_(0.8);
+        var box    = NumberBox().value_(~delayVals[i]).clipLo_(0).clipHi_(0.8).fixedWidth_(48);
 
         slider.action_({ |sl|
             var v = sl.value * 0.8;
@@ -51,7 +54,6 @@ s.waitForBoot {
             ~delayVals[i] = v;
             ~delayBuf.setn(0, Array.fill(512, { |j| ~delayVals[(j / 32).floor] }));
         });
-
         box.action_({ |nb|
             var v = nb.value.clip(0.0, 0.8);
             slider.value = v / 0.8;
@@ -60,19 +62,19 @@ s.waitForBoot {
         });
 
         row.add(label);
-        row.add(slider);
-        row.add(box);
-        layout.add(row);
-
+		row.add(slider);
+		row.add(box);
+        delayCol.add(row);
         delaySliders[i] = slider;
     };
 
-    layout.add(StaticText().string_("Feedback"));
+    // ── right column: feedback ────────────────────────────────────────────
+    fbCol.add(StaticText().string_("Feedback").align_(\center));
     16.do { |i|
-        var row = HLayout.new;
-        var label = StaticText().string_("Bin " ++ (i+1)).fixedWidth_(60);
+        var row    = HLayout.new;
+        var label  = StaticText().string_("Bin " ++ (i+1)).fixedWidth_(44);
         var slider = Slider().value_(~fbVals[i] / 0.95);
-        var box = NumberBox().value_(~fbVals[i]).clipLo_(0).clipHi_(0.95);
+        var box    = NumberBox().value_(~fbVals[i]).clipLo_(0).clipHi_(0.95).fixedWidth_(48);
 
         slider.action_({ |sl|
             var v = sl.value * 0.95;
@@ -80,7 +82,6 @@ s.waitForBoot {
             ~fbVals[i] = v;
             ~fbBuf.setn(0, Array.fill(512, { |j| ~fbVals[(j / 32).floor] }));
         });
-
         box.action_({ |nb|
             var v = nb.value.clip(0.0, 0.95);
             slider.value = v / 0.95;
@@ -89,14 +90,15 @@ s.waitForBoot {
         });
 
         row.add(label);
-        row.add(slider);
-        row.add(box);
-        layout.add(row);
-
+		row.add(slider);
+		row.add(box);
+        fbCol.add(row);
         fbSliders[i] = slider;
     };
 
-    w.layout = layout;
+    mainLayout.add(delayCol);
+    mainLayout.add(fbCol);
+    w.layout = mainLayout;
     w.onClose_({
         ~specDelay.free;
         ~delayBuf.free;
